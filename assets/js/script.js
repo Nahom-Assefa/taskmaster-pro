@@ -55,9 +55,16 @@ $("#trash").droppable({
   }
 });
 
+$("#modalDueDate").datepicker({
+  showOn: "both",
+  minDate: 1,
+  maxDate: 30,
+});
+
 var createTask = function (taskText, taskDate, taskList) {
   // create elements that make up a task item
   var taskLi = $("<li>").addClass("list-group-item");
+  
   var taskSpan = $("<span>")
     .addClass("badge badge-primary badge-pill")
     .text(taskDate);
@@ -65,6 +72,9 @@ var createTask = function (taskText, taskDate, taskList) {
 
   // append span and p element to parent li
   taskLi.append(taskSpan, taskP);
+
+  //check due date
+  auditTask(taskLi);
 
   // append to ul list on the page
   $("#list-" + taskList).append(taskLi);
@@ -84,11 +94,10 @@ var loadTasks = function () {
   }
 
   // loop over object properties
-  $.each(tasks, function (list, arr) {
-    //console.log(list, arr);
+  $.each(tasks, function (item, index) {
     // then loop over sub-array
-    arr.forEach(function (task) {
-      createTask(task.text, task.date, list);
+    index.forEach(function (task) {
+      createTask(task.text, task.date, item);
     });
   });
 };
@@ -106,7 +115,7 @@ $(".list-group").on("click", "p", function () {
 });
 
 // Event delegation To save data points after an Edit
-$(".list-group").on("blur", "textarea", function () {
+$(".list-group").on("click", "textarea", function () {
   //console.log(this);
   //get the textareas current value
   var text = $(this).val().trim();
@@ -135,13 +144,25 @@ $(".list-group").on("click", "span", function () {
     .attr("type", "text")
     .addClass("form-control")
     .val(date);
+
+    $(this).replaceWith(dateInput);
+
+    dateInput.datepicker({
+      //showOn: "both",
+      minDate: -5,
+      //maxDate: 30,
+      onClose: function(){
+        $(this).trigger("change");
+      }
+    }); 
   //console.log(dateInput);
-  $(this).replaceWith(dateInput);
+ 
   dateInput.trigger("focus");
+
 });
 
 // Event to soldify after editing the date
-$(".list-group").on("blur", "input[type='text']", function () {
+$(".list-group").on("change", "input[type='text']", function () {
   //console.log(this);
   //Get current text
   var date = $(this).val().trim();
@@ -159,7 +180,28 @@ $(".list-group").on("blur", "input[type='text']", function () {
     .text(date);
   //Replace input with span element
   $(this).replaceWith(taskSpan);
+  // Pass task's <li> element into auditTask() to check new due date
+  auditTask($(taskSpan).closest(".list-group-item"));
 });
+
+// audit task to create coloring enhancements
+var auditTask = function(taskEl) {
+  // get data from task element
+  var date = $(taskEl).find("span").text().trim();
+  // convert to moment object at 5:00pm
+  var time = moment(date, "L").set("hour", 17);
+  // remove any old classes from element
+  $(taskEl).removeClass("list-group-item-warning list-group-item-danger");
+  // apply new class if task is near/over due date
+  if (moment().isAfter(time)) {
+    $(taskEl).addClass("list-group-item-danger");
+    console.log('hello');
+  }
+  else if (Math.abs(moment().diff(time, "days"))<= 2) {
+    $(taskEl).addClass("list-group-item-warning");
+    console.log("baddie");
+  }
+}
 
 // modal was triggered
 $("#task-form-modal").on("show.bs.modal", function () {
