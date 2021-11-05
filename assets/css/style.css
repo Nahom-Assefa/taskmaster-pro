@@ -1,3 +1,75 @@
 ul.list-group {
   min-height: 130px;
 }
+
+body {
+  font-family: "Open Sans", sans-serif;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: "Staatliches", sans-serif;
+}
+
+.dropover {
+  background-color: rgb(0, 0, 0, 0.3)
+}
+
+.dropover-active {
+  background-color: rgba(0, 0, 0, 0.9);
+}
+
+.bottom-trash {
+  opacity: 0;
+  color: #f1f1f1;
+  font-size: 2.3rem;
+  font-family: "Staatliches", sans-serif;
+  transform: translateY(150px);
+  transition: all .5s ease-in-out;
+  background-color: rgba(234, 0, 39, 0.7);
+}
+
+.bottom-trash-drag {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+.bottom-trash-active {
+  background-color: rgba(234, 0, 39, 1);
+}
+
+.btn-add, .btn-save {
+  background-color: #FA8BFF;
+  background-image: linear-gradient(45deg, #FA8BFF 0%, #2BD2FF 52%, #2BFF88 90%);
+  transition: all .5s ease-out;
+  background-size: 1px 100px;
+  background-position: 0 -10px;
+}
+
+.btn-close, .btn-delete {
+  background-color: #EA0028;
+  background-image: linear-gradient(180deg, #FF9A8B 0%, #EA0028 100%);
+  transition: all .5s ease-out;
+  background-size: 1px 100px;
+  background-position: 0 -10px;
+}
+
+.btn-add:hover, 
+.btn-save:hover, 
+.btn-close:hover, 
+.btn-delete:hover {
+  background-position: 1px -50px;
+}
+
+
+
+
+/* When we currently drag a task, there's no indication of what area of the app is a dropzone, so we're going to highlight them when a drag event starts. 
+
+The trash dropzone takes up a little too much space on the site. Since it doesn't need to be visible unless a task item is being dragged, we'll only have it show up at that time.
+
+The buttons in the left column and the modal form are very—as the client put it—"Bootstrap-y." We're going to update their color scheme so they don't feel so plain./*
